@@ -10,6 +10,10 @@
 
 ## How to use
 Build in Golang **(1.9.1)**.
+> add the path of this proyect to your $GOPATH
+`export GOPATH=$GOPATH:'$HOME/path/to/globaliumcore'`
+`go install globaliumcore`
+`./bin/globaliumcore`
 
 ## ABOUT
 The version has this format:
