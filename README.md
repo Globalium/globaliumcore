@@ -3,7 +3,7 @@
 
 ----
 #### @authors: 
-* Diego Maroto (Github)[https://github.com/DiegoMGar] (Twitter)[https://twitter.com/DiegoMGar]
+* Diego Maroto [Github](https://github.com/DiegoMGar) [Twitter](https://twitter.com/DiegoMGar)
 * Miguel García
 
 ## How to use
