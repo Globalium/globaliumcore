@@ -6,7 +6,7 @@
 ----
 #### @authors: 
 * Diego Maroto [Github](https://github.com/DiegoMGar) [Twitter](https://twitter.com/DiegoMGar)
-* Miguel García
+* Miguel García [Github](https://github.com/mgarcia0094) [Twitter](https://twitter.com/miggan94)
 
 ## How to use
 Build in Golang **(1.9.1)**.
