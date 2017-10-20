@@ -1,7 +1,7 @@
 package glostructs
 
-type Transaction struct{
-	Origin Wallet
-	Destiny Wallet
-	Amount uint
+type Transaction struct {
+	Origin  WalletECDSA
+	Destiny WalletECDSA
+	Amount  uint
 }
