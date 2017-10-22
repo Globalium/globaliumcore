@@ -1,6 +1,7 @@
 package glostructs
 
 import (
+	"encoding/hex"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -9,37 +10,65 @@ import (
 )
 
 type WalletECDSA struct {
-	Pk     *ecdsa.PrivateKey
+	Pk     ecdsa.PublicKey
 	Amount uint64 //amount of wallet
 }
 
 func (w *WalletECDSA) New() {
 
-	priAndPub, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
+	priAndPub, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 
 	//validate generate keys of account
 	if err != nil {
 		panic(err)
 	}
 
-	w.Pk = priAndPub
+	w.Pk = priAndPub.PublicKey
 	w.Amount = 0
+
+	f, err := os.Create("extra/account1PrivateKey.txt")
+	
+	if err != nil {
+		panic(err)
+	}
+
+	//pasamos la privateKey
+	f.WriteString(hex.EncodeToString(priAndPub.D.Bytes()))
+	
+	//guardamos la public key
+	w.Save()
+
+	defer f.Close()
 }
 
-func TestNewWallet() {
+func (w *WalletECDSA) Save() {
 
-	var wallet WalletECDSA
-	wallet.New()
-	f, err := os.Create("extra/pruebaAccount.txt")
+	f, err := os.Create("extra/accounts.txt")
 
 	if err != nil {
 		panic(err)
 	}
 
-	//f.WriteString()
+	f.WriteString(w.Pk.X.String() + w.Pk.Y.String())
+
+	defer f.Close()
+}
+
+func TestNewWallet() {
+
+	var wallet WalletECDSA
+	
+	wallet.New()
+
+	f, err := os.Open("extra/account1PrivateKey.txt")
+	
+
+	if err != nil {
+		panic(err)
+	}
+
 	defer f.Close()
 
-	fmt.Println("\nYour private key is:")
-	fmt.Println(wallet.Pk.D.String())
+	fmt.Println("\nEsta firmado por el cliente de la wallet")
 
 }
