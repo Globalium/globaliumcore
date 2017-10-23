@@ -1,6 +1,8 @@
 package glostructs
 
 import (
+	"golang.org/x/crypto/ripemd160"
+	"crypto/sha256"
 	"encoding/hex"
 	"crypto/ecdsa"
 	"crypto/elliptic"
@@ -10,7 +12,7 @@ import (
 )
 
 type WalletECDSA struct {
-	Pk     ecdsa.PublicKey
+	idAccount     string
 	Amount uint64 //amount of wallet
 }
 
@@ -23,33 +25,38 @@ func (w *WalletECDSA) New() {
 		panic(err)
 	}
 
-	w.Pk = priAndPub.PublicKey
-	w.Amount = 0
-
-	f, err := os.Create("extra/account1PrivateKey.txt")
+	h1 := sha256.New()
+	h2 := sha256.New()
 	
-	if err != nil {
-		panic(err)
-	}
+	h1.Write([]byte(priAndPub.X.String()))
+	h2.Write([]byte(priAndPub.Y.String()))
 
-	//pasamos la privateKey
-	f.WriteString(hex.EncodeToString(priAndPub.D.Bytes()))
+	var strAux string = hex.EncodeToString(h1.Sum(nil)) + hex.EncodeToString(h2.Sum(nil))
+	r := ripemd160.New()
+	r.Write([]byte(strAux))
+
+	fmt.Println(hex.EncodeToString(r.Sum(nil)))
+	
+
+	//imprimimos la privateKey
+	fmt.Println("Your private Key:")
+	fmt.Println(hex.EncodeToString(priAndPub.D.Bytes()))
 	
 	//guardamos la public key
-	w.Save()
-
-	defer f.Close()
+	w.Save(priAndPub.PublicKey, w.idAccount)
 }
 
-func (w *WalletECDSA) Save() {
+func (w *WalletECDSA) Save(k ecdsa.PublicKey, id string) {
 
 	f, err := os.Create("extra/accounts.txt")
 
 	if err != nil {
 		panic(err)
 	}
-
-	f.WriteString(w.Pk.X.String() + w.Pk.Y.String())
+	
+	f.WriteString(id)
+	f.WriteString(k.X.String())
+	f.WriteString(k.Y.String())
 
 	defer f.Close()
 }
