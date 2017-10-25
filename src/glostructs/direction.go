@@ -60,12 +60,18 @@ func (w *Direction) New() {
 	//imprimimos la clave privada por consola para que se la guarde el cliente
 	aux := priAndPub.D.String() + ":" + priAndPub.PublicKey.X.String() + ":" + priAndPub.PublicKey.Y.String()
 	
-	fmt.Println(priAndPub.PublicKey.X.String())
-	
 	fmt.Println("Your private Key:")
 	fmt.Println(base64.StdEncoding.EncodeToString([]byte(aux)))
 
 }
+
+//a partir del string PrivateKey genera un objeto PrivateKey
+func GetPrivateKey(pk string) ecdsa.PrivateKey {
+	var aux ecdsa.PrivateKey
+	return aux
+}
+
+
 /*
 	Crea una cuenta y expulsa la privateKey por consola.
 	Luego la consola vuelve a pedirte la private.
