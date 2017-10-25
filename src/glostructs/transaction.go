@@ -51,5 +51,5 @@ func (te *TransactionEncripted) New(pk string, t Transaction) {
 //desencripta la transaccion a partir de la key publica
 func (te *TransactionEncripted) desencripted(pk ecdsa.PublicKey) (Transaction, bool) {
 	var aux Transaction
-	return aux, trues
+	return aux, true
 }
