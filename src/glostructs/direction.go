@@ -2,7 +2,6 @@ package glostructs
 
 import (
 	"strings"
-	"bufio"
 	"encoding/base64"
 	"math/big"
 	"golang.org/x/crypto/ripemd160"
@@ -12,8 +11,10 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"fmt"
-	"os"
 )
+
+//var aux for save PrivateKey of account Test for passing the test
+var auxTestNewDirection string
 
 type Direction struct {
 	IdAccount     string
@@ -60,6 +61,9 @@ func (w *Direction) New() {
 	//imprimimos la clave privada por consola para que se la guarde el cliente
 	aux := priAndPub.D.String() + ":" + priAndPub.PublicKey.X.String() + ":" + priAndPub.PublicKey.Y.String()
 	
+	//for test only!
+	auxTestNewDirection = aux
+
 	fmt.Println("Your private Key:")
 	fmt.Println(base64.StdEncoding.EncodeToString([]byte(aux)))
 
@@ -87,18 +91,8 @@ func TestNewDirection() {
 
 	fmt.Println("New Account create succes! Direction is " + testDirection.IdAccount)
 
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Input your private id: ")
-	text , _ := reader.ReadString('\n')
-
-	auxString, err := base64.StdEncoding.DecodeString(text)
-
-	if err != nil {
-		panic(err)
-	}
-
 	var dates []string
-	dates = strings.Split(string(auxString), ":")
+	dates = strings.Split(string(auxTestNewDirection), ":")
 
 	n1 := new(big.Int)
 	n2 := new(big.Int)
