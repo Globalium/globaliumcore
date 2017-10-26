@@ -22,10 +22,10 @@ type TransactionEncripted struct {
 //new transaction constructor
 func (t *Transaction) New(dest Direction, amount uint64) {
 	
-	if amount <= t.Origin.Amount {
+	if amount <= t.Origin.amount {
 		
 	} else {
-		fmt.Println("ErrorTransaction: id " + t.Origin.IdAccount + "not enough globaliums.")
+		fmt.Println("ErrorTransaction: id " + t.Origin.id + "not enough globaliums.")
 	}
 
 }
