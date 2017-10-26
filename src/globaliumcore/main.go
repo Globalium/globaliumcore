@@ -10,7 +10,7 @@ var version string = "v2017.0.1.0"
 
 func menu() (string, error){
 	fmt.Println("What do you want to do?")
-	fmt.Println("\t1.- Test new wallet")
+	fmt.Println("\t1.- Test new direction")
 	in := bufio.NewReader(os.Stdin)
 	opcion, err := in.ReadString('\n')
 	if err != nil {
@@ -28,8 +28,8 @@ func main(){
 	}
 	switch opcion{
 	case "1":
-		fmt.Println("Testing: Create new wallet...")
-		glo.TestNewWallet()
+		fmt.Println("Testing: Create new direction...")
+		glo.TestNewDirection()
 	default:
 		fmt.Println("Option don't supported.")
 	}
