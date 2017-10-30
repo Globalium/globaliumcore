@@ -49,6 +49,9 @@ func TestNewBlock() {
 	var a,b Direction
 	var bl Block
 
+	PK := StringToPrivateKey(EXAMPLE_PK)
+
+	a.Charge(CreateIDAccount(PK.PublicKey.X, PK.PublicKey.Y))
 	b.New()
 
 	fmt.Printf("Create a block with 10 transactions...")

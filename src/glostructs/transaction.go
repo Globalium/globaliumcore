@@ -1,10 +1,8 @@
 package glostructs
 
 import (
-	"bufio"
 	"math/big"
 	"crypto/ecdsa"
-	"os"
 	"fmt"
 	"crypto/rand"
 )
@@ -71,19 +69,14 @@ func (t *Transaction)VerifyTransaction() bool {
 func TestNewTransaction() {
 
 	var a,b Direction
-	a.New()
+
+	PK := StringToPrivateKey(EXAMPLE_PK)
+
+	a.Charge(CreateIDAccount(PK.PublicKey.X, PK.PublicKey.Y))
 	b.New()
 
-	in := bufio.NewReader(os.Stdin)
-	fmt.Printf("Input PrivateKey: ")
-	pKString, err := in.ReadString('\n')
-
-	if err != nil {
-		panic(err)
-	}
-
 	var auxT Transaction
-	auxT.New(a,b,0, pKString)
+	auxT.New(a,b,0, EXAMPLE_PK)
 
 	if auxT.VerifyTransaction() {
 		fmt.Println("TestNewTransaction: Correct")

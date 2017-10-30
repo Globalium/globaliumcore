@@ -51,7 +51,8 @@ func (d *Direction) New() {
 //busca su amuont total y lo carga
 //SIN COMPLETAR
 func (d *Direction)Charge(id string) {
-
+	d.id = id
+	d.amount = 0
 }
 
 //devuelve el amount de la direccion
