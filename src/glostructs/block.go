@@ -12,8 +12,4 @@ func (b *Block) New() {
 //add transaction to block if block is accepted
 func (b *Block) AddTransaction(t Transaction) {
 
-	if(t.isValid()) {
-		b.Entries = append(b.Entries, t)
-	}
-
 }

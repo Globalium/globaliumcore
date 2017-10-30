@@ -1,55 +1,98 @@
 package glostructs
 
 import (
+	"bufio"
+	"math/big"
 	"crypto/ecdsa"
+	"os"
 	"fmt"
+	"crypto/rand"
 )
 
 //transaction format in plane trext
+// r, s sign of ecdsa
+// public for verify sign
 type Transaction struct {
-	Origin  Direction
-	Destiny Direction
-	Amount  uint64
+	origin  Direction
+	destiny Direction
+	amount  uint64
+	r,s 	*big.Int
+	pb		ecdsa.PublicKey
 }
 
-//format transactionEncripted
-type TransactionEncripted struct {
-	publicKey ecdsa.PublicKey //public key
-	textEncripted string //text encripted
-}
-
-
-//new transaction constructor
-func (t *Transaction) New(dest Direction, amount uint64) {
+//constructor Transaction
+//Comprueba en la blockchain si la direccion tiene suficientes monedas
+func (t *Transaction)New(origin Direction, destiny Direction, amount uint64, pkPrivate string) {
 	
-	if amount <= t.Origin.amount {
+	if VerifyAmountDirection(origin) {
 		
+		t.origin = origin
+		t.destiny = destiny
+		t.amount = amount
+
+		t.Signed(pkPrivate)
+
+		if t.VerifyTransaction() {
+			fmt.Println("Transaction created.")
+		} else {
+			fmt.Println("Transaction NOT created, failed!")
+		}
+
 	} else {
-		fmt.Println("ErrorTransaction: id " + t.Origin.id + "not enough globaliums.")
+		//transaction not valid, in our blockchain origin not enough coins
+		fmt.Println("ErrorTransaction: Direction not enough coin in blockchain")
 	}
 
 }
 
-// comprueba que una transacción es válida según la blockchain local
-func (t *Transaction) isValid() (bool) {
-	return true
+//
+func (t *Transaction)Signed(pk string) {
+	
+	PK := StringToPrivateKey(pk)
+	
+	r, s, err := ecdsa.Sign(rand.Reader, &PK, []byte(fmt.Sprintf("%v",t)))
+
+	if err != nil {
+		panic(err)
+	}
+
+	t.r = r
+	t.s = s
+	t.pb = PK.PublicKey
 }
 
-//encripta la transaccion con la privatekey pasada por parametro
-func (t *Transaction) encripted(pk string) TransactionEncripted {
-	var aux TransactionEncripted
-	return aux
+//return verify transaction
+func (t *Transaction)VerifyTransaction() bool {
+	return ecdsa.Verify(&t.pb,[]byte(fmt.Sprintf("%v",t)),t.r,t.s) && CreateIDAccount(t.pb.X, t.pb.Y) == t.origin.GetDirection()
 }
 
-// constructor el cual encripta la transacción a realizar
-// para codificar la informacion
-// string es la clave privada que se da cuando se crea la cuenta
-func (te *TransactionEncripted) New(pk string, t Transaction) {
+
+//test new transaction
+func TestNewTransaction() {
+
+	var a,b Direction
+	a.New()
+	b.New()
+
+	in := bufio.NewReader(os.Stdin)
+	fmt.Printf("Input PrivateKey: ")
+	pKString, err := in.ReadString('\n')
+
+	if err != nil {
+		panic(err)
+	}
+
+	var auxT Transaction
+	auxT.New(a,b,0, pKString)
+
+	if auxT.VerifyTransaction() {
+		fmt.Println("TestNewTransaction: Correct")
+	} else {
+		fmt.Println("TestNewTransaction: Incorrect")
+	}
+	
 
 }
 
-//desencripta la transaccion a partir de la key publica
-func (te *TransactionEncripted) desencripted(pk ecdsa.PublicKey) (Transaction, bool) {
-	var aux Transaction
-	return aux, true
-}
+
+
