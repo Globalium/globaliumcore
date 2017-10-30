@@ -55,7 +55,7 @@ func (t *Transaction)Signed(pk string) {
 	if err != nil {
 		panic(err)
 	}
-
+	
 	t.r = r
 	t.s = s
 	t.pb = PK.PublicKey

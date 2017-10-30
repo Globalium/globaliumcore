@@ -79,7 +79,7 @@ func CreateIDAccount(X *big.Int, Y *big.Int) string {
 			
 	h1.Write([]byte(X.String()))
 	h2.Write([]byte(Y.String()))
-		
+	
 	//doble sha para seguridad criptográfica
 	h1.Write([]byte(h1.Sum(nil)))
 	h2.Write([]byte(h2.Sum(nil)))
