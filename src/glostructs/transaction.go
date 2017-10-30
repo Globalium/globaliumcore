@@ -20,9 +20,9 @@ type Transaction struct {
 
 //constructor Transaction
 //Comprueba en la blockchain si la direccion tiene suficientes monedas
-func (t *Transaction)New(origin Direction, destiny Direction, amount uint64, pkPrivate string) {
+func (t *Transaction)New(origin Direction, destiny Direction, amount uint64, pkPrivate string) bool {
 	
-	if VerifyAmountDirection(origin) {
+	if VerifyAmount(origin, amount) {
 		
 		t.origin = origin
 		t.destiny = destiny
@@ -31,19 +31,18 @@ func (t *Transaction)New(origin Direction, destiny Direction, amount uint64, pkP
 		t.Signed(pkPrivate)
 
 		if t.VerifyTransaction() {
-			fmt.Println("Transaction created.")
+			return true
 		} else {
-			fmt.Println("Transaction NOT created, failed!")
+			return false
 		}
 
 	} else {
-		//transaction not valid, in our blockchain origin not enough coins
-		fmt.Println("ErrorTransaction: Direction not enough coin in blockchain")
+		return false
 	}
 
 }
 
-//
+//sign transaction with privatekey
 func (t *Transaction)Signed(pk string) {
 	
 	PK := StringToPrivateKey(pk)
@@ -62,6 +61,14 @@ func (t *Transaction)Signed(pk string) {
 //return verify transaction
 func (t *Transaction)VerifyTransaction() bool {
 	return ecdsa.Verify(&t.pb,[]byte(fmt.Sprintf("%v",t)),t.r,t.s) && CreateIDAccount(t.pb.X, t.pb.Y) == t.origin.GetDirection()
+}
+
+//guardar la transaccion en el bloque
+func (t *Transaction) Save() {
+	//solo guardaríamos:
+	// from
+	// to
+	// amount
 }
 
 
@@ -83,7 +90,6 @@ func TestNewTransaction() {
 	} else {
 		fmt.Println("TestNewTransaction: Incorrect")
 	}
-	
 
 }
 

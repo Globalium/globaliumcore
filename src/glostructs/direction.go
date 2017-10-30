@@ -22,7 +22,8 @@ type Direction struct {
 }
 
 //constructor de la clase
-func (d *Direction) New() {
+//devuelve address and privatekey
+func (d *Direction) New() (string,string) {
 
 	//creamos las claves
 	priAndPub, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
@@ -40,11 +41,10 @@ func (d *Direction) New() {
 	aux := priAndPub.D.String() + ":" + priAndPub.PublicKey.X.String() + ":" + priAndPub.PublicKey.Y.String()
 	
 	//for test only!
-	auxTestNewDirection = aux
+	auxTestNewDirection = base64.StdEncoding.EncodeToString([]byte(aux))
 
-	fmt.Println("Your private Key:")
-	fmt.Println(base64.StdEncoding.EncodeToString([]byte(aux)))
 
+	return d.id, base64.StdEncoding.EncodeToString([]byte(aux))
 }
 
 //busca en la blockchain la direccion pasada por parámetro
@@ -55,19 +55,9 @@ func (d *Direction)Charge(id string) {
 	d.amount = 0
 }
 
-//devuelve el amount de la direccion
-func (d *Direction)GetAmount() uint64 {
-	return d.amount
-}
-
-//devuelve el amount de la direccion
-func (d *Direction)GetDirection() string {
-	return d.id
-}
-
 //Verificamos si la direccion pasada tiene en nuestra blockchain igual o más coins de los que dice tener el objeto
 //SIN ACABAR
-func VerifyAmountDirection(direction Direction) bool{
+func VerifyAmount(d Direction, a uint64) bool {
 	return true
 }
 
