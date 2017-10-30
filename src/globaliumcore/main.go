@@ -12,6 +12,7 @@ func menu() (string, error){
 	fmt.Println("What do you want to do?")
 	fmt.Println("\t1.- Test new direction")
 	fmt.Println("\t2.- Test new transaction")
+	fmt.Println("\t3.- Test new block")
 	in := bufio.NewReader(os.Stdin)
 	opcion, err := in.ReadString('\n')
 	if err != nil {
@@ -34,6 +35,9 @@ func main(){
 	case "2":
 		fmt.Println("Testing: Create new transaction...")
 		glo.TestNewTransaction()
+	case "3":
+		fmt.Println("Testing: Create new block...")
+		glo.TestNewBlock()
 	default:
 		fmt.Println("Option don't supported.")
 	}
