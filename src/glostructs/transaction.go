@@ -14,8 +14,13 @@ type Transaction struct {
 	origin  Direction
 	destiny Direction
 	amount  uint64
-	r,s 	*big.Int
-	pb		ecdsa.PublicKey
+}
+
+//object transaction
+type TransactionEncripted struct {
+	tra Transaction
+	r,s *big.Int
+	pb ecdsa.PublicKey
 }
 
 //constructor Transaction
@@ -23,14 +28,14 @@ type Transaction struct {
 func (t *Transaction)New(origin Direction, destiny Direction, amount uint64, pkPrivate string) bool {
 	
 	if VerifyAmount(origin, amount) {
-		
+
 		t.origin = origin
 		t.destiny = destiny
 		t.amount = amount
 
-		t.Signed(pkPrivate)
+		tr := t.Signed(pkPrivate)
 
-		if t.VerifyTransaction() {
+		if tr.VerifyTransaction() {
 			return true
 		} else {
 			return false
@@ -43,24 +48,32 @@ func (t *Transaction)New(origin Direction, destiny Direction, amount uint64, pkP
 }
 
 //sign transaction with privatekey
-func (t *Transaction)Signed(pk string) {
+func (t *Transaction)Signed(pk string) TransactionEncripted {
 	
+	var tr TransactionEncripted
 	PK := StringToPrivateKey(pk)
+
+	tr.tra.origin = t.origin
+	tr.tra.destiny = t.destiny
+	tr.tra.amount = t.amount
 	
-	r, s, err := ecdsa.Sign(rand.Reader, &PK, []byte(fmt.Sprintf("%v",t)))
+	r, s, err := ecdsa.Sign(rand.Reader, &PK, []byte(fmt.Sprintf("%v",tr.tra)))
 
 	if err != nil {
 		panic(err)
 	}
 	
-	t.r = r
-	t.s = s
-	t.pb = PK.PublicKey
+	//copy transaction
+	tr.r = r
+	tr.s = s
+	tr.pb = PK.PublicKey
+
+	return tr
 }
 
 //return verify transaction
-func (t *Transaction)VerifyTransaction() bool {
-	return ecdsa.Verify(&t.pb,[]byte(fmt.Sprintf("%v",t)),t.r,t.s) && CreateIDAccount(t.pb.X, t.pb.Y) == t.origin.GetDirection()
+func (t *TransactionEncripted)VerifyTransaction() bool {
+	return ecdsa.Verify(&t.pb,[]byte(fmt.Sprintf("%v",t.tra)),t.r,t.s) && (CreateIDAccount(t.pb.X, t.pb.Y) == t.tra.origin.id)
 }
 
 //guardar la transaccion en el bloque
@@ -76,16 +89,14 @@ func (t *Transaction) Save() {
 func TestNewTransaction() {
 
 	var a,b Direction
-
 	PK := StringToPrivateKey(EXAMPLE_PK)
 
 	a.Charge(CreateIDAccount(PK.PublicKey.X, PK.PublicKey.Y))
 	b.New()
 
 	var auxT Transaction
-	auxT.New(a,b,0, EXAMPLE_PK)
 
-	if auxT.VerifyTransaction() {
+	if auxT.New(a,b,0, EXAMPLE_PK) {
 		fmt.Println("TestNewTransaction: Correct")
 	} else {
 		fmt.Println("TestNewTransaction: Incorrect")

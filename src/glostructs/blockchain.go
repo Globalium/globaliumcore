@@ -40,6 +40,7 @@ func (b *Blockchain) CreateAddress() {
 
 }
 
+//create transaction
 func (b *Blockchain) CreateTransaction(from string, to string, amount uint64, pk string) bool {
 
 	var t Transaction
@@ -52,13 +53,14 @@ func (b *Blockchain) CreateTransaction(from string, to string, amount uint64, pk
 
 }
 
+//verify transaction
 func (b *Blockchain) VerifyTransaction(t Transaction) bool {
 
 	var a Direction
 
 	a.Charge(t.origin.id)
 
-	if VerifyAmount(a,t.amount) && t.VerifyTransaction() {
+	if VerifyAmount(a,t.amount) {
 		return true
 	} else {
 		return false
